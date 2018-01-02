@@ -10,11 +10,11 @@ import com.zhangyingwei.cockroach.store.IStore;
 public class ImageStore implements IStore {
     @Override
     public void store(TaskResponse response) throws Exception {
-        String name = FileUtils.getFileName(response);
+        String name = IoUtils.getFileName(response);
         System.out.println(name);
-        String name2 = FileUtils.getFileNameOrUuid(response);
+        String name2 = IoUtils.getFileNameOrUuid(response);
         System.out.println(name2);
-        String name3 = FileUtils.getFileNameOr(response, new NameGenerator() {
+        String name3 = IoUtils.getFileNameOr(response, new NameGenerator() {
             @Override
             public String name(TaskResponse response) {
                 String url = response.getTask().getUrl();
@@ -26,7 +26,7 @@ public class ImageStore implements IStore {
 
         System.out.println("use:"+name2);
 
-        FileUtils.save(response.getContentBytes(),"/Users/zhangyw/IdeaProjects/zhangyw/Projects/java/cockroach/src/main/resources",name2+".flv");
+        IoUtils.save(response.getContentBytes(),"/Users/zhangyw/IdeaProjects/zhangyw/Projects/java/cockroach/src/main/resources",name2+".flv");
         System.out.println("end");
     }
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
  * Created by zhangyw on 2017/10/18/018.
  * 操作文件的工具类
  */
-public class FileUtils {
+public class IoUtils {
 
     /**
      * save bytes into file
@@ -92,5 +92,23 @@ public class FileUtils {
             name = nameGenerator.name(response);
         }
         return name;
+    }
+
+    public static String readContent(InputStream inputStream) {
+        byte[] bytes = new byte[0];
+        try {
+            bytes = new byte[inputStream.available()];
+            System.out.println(bytes.length);
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return new String(bytes);
     }
 }
