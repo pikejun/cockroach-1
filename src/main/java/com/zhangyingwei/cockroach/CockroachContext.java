@@ -10,6 +10,8 @@ import com.zhangyingwei.cockroach.http.HttpProxy;
 import com.zhangyingwei.cockroach.http.client.HttpClientProxy;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,6 +24,7 @@ public class CockroachContext {
     private int thread;
     private HttpProxy proxy = null;
     private ExecutorService service = Executors.newCachedThreadPool();
+    public List<TaskExecuter> executerList=new ArrayList<TaskExecuter>();
     private boolean started = false;
 
     public CockroachContext(final CockroachConfig config) {
@@ -42,6 +45,7 @@ public class CockroachContext {
             this.thread = config.getThread();
             for (int i = 0; i < thread; i++) {
                 TaskExecuter executer = new TaskExecuter(queue, this.bulidHttpClient(), this.config.getStore().newInstance(), this.config.getTaskErrorHandler().newInstance(), this.config.getThreadSleep(), this.config.isAutoClose());
+                executerList.add(executer);
                 logger.info("new thread:" + executer.getId());
                 service.execute(executer);
             }

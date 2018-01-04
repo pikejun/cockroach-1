@@ -32,6 +32,11 @@ public class TaskQueue implements CockroachQueue {
         return new TaskQueue(calacity);
     }
 
+    public boolean isEmpty()
+    {
+        return queue.isEmpty();
+    }
+
     private TaskQueue(int calacity) {
         this.queue = new LinkedBlockingDeque<Task>(calacity);
         this.faildQueue = new LinkedBlockingDeque<Task>();

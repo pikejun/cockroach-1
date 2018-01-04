@@ -34,35 +34,60 @@ public class TaskExecuter implements Runnable {
         this.sleep = sleep;
     }
 
+    volatile boolean flag = true;
+
+    public void shutdown()
+    {
+        flag = false;
+    }
+
     @Override
-    public void run() {
-        boolean flag = true;
-        loop:while (flag) {
+    public void run()
+    {
+        int nullTaskCnt=0;
+
+        loop:while (flag)
+        {
             try {
                 Task task = null;
-                if(autoClose){
-                    task = this.queue.poll();
-                    if(task == null){
+                task = this.queue.poll();
+
+                if(task == null)
+                {
+                    if(autoClose&&nullTaskCnt++>10)
+                    {
                         flag = false;
+                        logger.info(this.getId()+" auto closed - "+task);
                         break loop;
                     }
-                }else{
-                    task = this.queue.take();
+
+                    Thread.sleep(1000);
+
+                    continue ;
                 }
+
+
                 TimeUnit.MILLISECONDS.sleep(sleep);
                 logger.info(this.getId()+" GET - "+task);
                 TaskResponse response = this.httpClient.proxy().doGet(task);
                 response.setQueue(this.queue);
-                if(response.isEmpty()){
+
+                if(response.isEmpty())
+                {
                     this.errorHandler.error(new TaskErrorResponse(response));
-                }else{
+                }
+                else
+                {
                     this.store.store(response);
                 }
+
                 response.getResponse().close();
+
             } catch (Exception e) {
                 logger.error(this.getId()+" - "+ e.getLocalizedMessage());
             }
         }
+
         logger.info(id+" : over");
     }
 
