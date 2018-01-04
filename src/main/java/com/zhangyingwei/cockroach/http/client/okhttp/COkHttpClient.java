@@ -44,17 +44,23 @@ public class COkHttpClient extends AbstractHttpClient {
 
     @Override
     public HttpClient proxy() {
-        if(this.proxy != null && !this.proxy.isEmpty()){
-            this.proxyTuple = this.proxy.randomProxy();
-            this.clientBuilder = this.clientBuilder
-                    .cookieJar(new CookieManager(this.cookie))
-                    .proxy(
-                            new Proxy(
-                                    Proxy.Type.HTTP,
-                                    new InetSocketAddress(this.proxyTuple.ip(),this.proxyTuple.port())
-                            )
-                    );
-            logger.info("代理:"+this.proxyTuple);
+        if(!"127.0.0.1:80".equals(proxyTuple.ip()+":"+proxyTuple.port()))
+        {
+            if (this.proxy != null && !this.proxy.isEmpty())
+            {
+                this.proxyTuple = this.proxy.randomProxy();
+                this.clientBuilder = this.clientBuilder
+                        .cookieJar(new CookieManager(this.cookie))
+                        .proxy(
+                                new Proxy(
+                                        Proxy.Type.HTTP,
+                                        new InetSocketAddress(
+                                                this.proxyTuple.ip(),
+                                                this.proxyTuple.port())
+                                )
+                        );
+                logger.info("代理:" + this.proxyTuple);
+            }
         }
         return this;
     }
